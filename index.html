@@ -83,15 +83,21 @@
             outline: 1px solid var(--highlight);
         }
 
-        /* Wake Lock Toggle Switch Button */
+        /* Wake Lock Toggle Switch Button - Hidden on phones (< 768px), visible on tablets/desktops */
         .wake-lock-btn {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
             color: var(--text-muted);
-            display: flex;
+            display: none; /* Hidden by default on small screens */
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
+        }
+
+        @media (min-width: 768px) {
+            .wake-lock-btn {
+                display: flex; /* Shown on tablets and MacBooks/desktops */
+            }
         }
 
         .wake-lock-btn.active {
@@ -343,7 +349,7 @@
                 </div>
             </div>
             <div class="controls">
-                <!-- Stay Awake Toggle Button -->
+                <!-- Stay Awake Toggle Button (Tablets & Desktops Only) -->
                 <button id="wake-lock-btn" class="wake-lock-btn" onclick="toggleWakeLock()">
                     <div class="wake-dot"></div>
                     <span id="wake-btn-text">Stay Awake: Off</span>
@@ -440,13 +446,6 @@
                 btnText.textContent = 'Stay Awake: Off';
             }
         }
-
-        // Re-acquire wake lock if user tabs back in and it was previously active
-        document.addEventListener('visibilitychange', async () => {
-            if (wakeLock === null && document.visibilityState === 'visible') {
-                // If user wants it active, they can tap it back on, or we can leave it manual
-            }
-        });
 
         async function fetchScores() {
             const container = document.getElementById('games-container');
