@@ -7,14 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0b1329;       /* Deep, rich stadium navy */
-            --card-bg: #1e293b;        /* Crisp slate card background */
-            --card-border: #475569;    /* Brighter border for better card separation */
-            --text-main: #ffffff;      /* Pure white for top legibility */
-            --text-muted: #cbd5e1;     /* Brighter muted text */
-            --accent-live: #f87171;    /* Vibrant live red */
+            --bg-color: #0b1329;       
+            --card-bg: #1e293b;        
+            --card-border: #475569;    
+            --text-main: #ffffff;      
+            --text-muted: #cbd5e1;     
+            --accent-live: #f87171;    
             --accent-final: #94a3b8;   
-            --accent-upcoming: #60a5fa;/* Bright game day blue */
+            --accent-upcoming: #60a5fa;
             --highlight: #3b82f6;
         }
 
@@ -94,12 +94,11 @@
             outline: 1px solid var(--highlight);
         }
 
-        /* Wake Lock Toggle Switch Button - Hidden on phones (< 768px), visible on tablets/desktops */
         .wake-lock-btn {
             background-color: #27354f;
             border: 1px solid var(--card-border);
             color: var(--text-muted);
-            display: none; /* Hidden by default on small screens */
+            display: none; 
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
@@ -107,7 +106,7 @@
 
         @media (min-width: 768px) {
             .wake-lock-btn {
-                display: flex; /* Shown on tablets and MacBooks/desktops */
+                display: flex; 
             }
         }
 
@@ -152,7 +151,6 @@
             100% { transform: scale(0.95); opacity: 0.9; }
         }
 
-        /* Stat Counter Boxes */
         .stats-bar {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -188,14 +186,12 @@
         .stat-box.upcoming .stat-value { color: var(--accent-upcoming); }
         .stat-box.total .stat-value { color: var(--text-main); }
 
-        /* Responsive Grid */
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 10px;
         }
 
-        /* Game Box */
         .game-card {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -213,7 +209,6 @@
             border-color: #94a3b8;
         }
 
-        /* Header Info (Clock & Quarter) */
         .game-header {
             display: flex;
             justify-content: space-between;
@@ -258,7 +253,6 @@
             font-weight: 500;
         }
 
-        /* Teams section */
         .teams-list {
             display: flex;
             flex-direction: column;
@@ -312,7 +306,6 @@
             flex-shrink: 0;
         }
 
-        /* Broadcast / Situation Footer */
         .game-footer {
             margin-top: 6px;
             padding-top: 4px;
@@ -330,11 +323,10 @@
         }
 
         .situation {
-            color: #fde047; /* Brighter gold for down & distance */
+            color: #fde047; 
             font-weight: 600;
         }
 
-        /* States */
         .loading, .error, .no-games {
             grid-column: 1 / -1;
             text-align: center;
@@ -360,17 +352,15 @@
                 <div id="week-display" class="week-display">Loading week...</div>
                 <div class="status-indicator">
                     <div class="pulse"></div>
-                    <span id="update-status">Live</span>
+                    <span id="update-status">Live (20s)</span>
                 </div>
             </div>
             <div class="controls">
-                <!-- Stay Awake Toggle Button (Tablets & Desktops Only) -->
                 <button id="wake-lock-btn" class="wake-lock-btn" onclick="toggleWakeLock()">
                     <div class="wake-dot"></div>
                     <span id="wake-btn-text">Stay Awake: Off</span>
                 </button>
 
-                <!-- Conference Filter -->
                 <select id="conference-select" onchange="filterGames()">
                     <option value="all" selected>All Conferences</option>
                     <option value="8">SEC</option>
@@ -386,7 +376,6 @@
                     <option value="18">FBS Independents</option>
                 </select>
 
-                <!-- Status Filter -->
                 <select id="filter-select" onchange="filterGames()">
                     <option value="all" selected>All Games Status</option>
                     <option value="live">Live Only</option>
@@ -397,7 +386,6 @@
             </div>
         </div>
 
-        <!-- Summary Stat Counters Bar -->
         <div class="stats-bar">
             <div class="stat-box live">
                 <span class="stat-label">Live</span>
@@ -427,8 +415,8 @@
     <script>
         let allGamesData = [];
         let wakeLock = null;
+        let countdownTimer = 20;
 
-        // Toggle Screen Wake Lock on user click
         async function toggleWakeLock() {
             const btn = document.getElementById('wake-lock-btn');
             const btnText = document.getElementById('wake-btn-text');
@@ -463,12 +451,12 @@
         }
 
         async function fetchScores() {
-            const container = document.getElementById('games-container');
             const statusEl = document.getElementById('update-status');
             statusEl.textContent = 'Updating...';
 
             try {
-                const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80&limit=300');
+                // Removed restrictive ?groups=80 parameter to ensure all games load unconstrained
+                const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?limit=400&t=${new Date().getTime()}`);
                 if (!response.ok) throw new Error('Network response was not ok');
                 
                 const data = await response.json();
@@ -477,10 +465,13 @@
                 updateSeasonWeekDisplay(data);
                 updateGlobalStats(allGamesData);
                 renderGames();
-                statusEl.textContent = 'Live';
+                
+                countdownTimer = 20;
+                statusEl.textContent = `Live (${countdownTimer}s)`;
             } catch (error) {
                 console.error("Error fetching scores:", error);
                 statusEl.textContent = 'Error updating';
+                const container = document.getElementById('games-container');
                 if (allGamesData.length === 0) {
                     container.innerHTML = `<div class="error">Unable to load live scores right now. Please check your connection or try refreshing.</div>`;
                 }
@@ -538,33 +529,25 @@
         }
 
         function formatUpcomingTime(dateString, detailString) {
-            // Priority 1: Parse accurately using game's real ISO date object if available
             if (dateString) {
                 try {
                     const gameDate = new Date(dateString);
                     if (!isNaN(gameDate)) {
-                        // Format to "Sat, 7:00 PM" style using local time
                         const weekday = gameDate.toLocaleDateString('en-US', { weekday: 'short' });
-                        const timeStr = gameDate.toLocaleDateString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-                        // Extract time part cleanly from localized string if it includes date
                         const timeOnly = gameDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
                         return `${weekday}, ${timeOnly}`;
                     }
-                } catch (e) {
-                    // Fallthrough to string cleanup if date parsing fails
-                }
+                } catch (e) {}
             }
 
-            // Priority 2: Fallback text string manipulation
             if (!detailString) return '';
-            // ESPN strings look like "Sat, Sep 26, 7:00 PM" or "9/26 - 7:00 PM EDT"
             if (detailString.includes('-')) {
                 const parts = detailString.split(' - ');
-                if (parts.length > 1) return parts[1].replace(' EDT', '').replace(' EST', '').replace(' CDT', '').replace(' CST', '').replace(' PDT', '').replace(' PST', '').trim();
+                if (parts.length > 1) return parts[1].replace(/ (EDT|EST|CDT|CST|PDT|PST)/g, '').trim();
             }
             const commaParts = detailString.split(', ');
             if (commaParts.length >= 3) {
-                return `${commaParts[0]}, ${commaParts[commaParts.length - 1].replace(/ (EDT|EST|CDT|CST|PDT|PST)/, '')}`;
+                return `${commaParts[0]}, ${commaParts[commaParts.length - 1].replace(/ (EDT|EST|CDT|CST|PDT|PST)/g, '')}`;
             }
             return detailString;
         }
@@ -617,7 +600,7 @@
                 const comp = event.competitions[0];
                 const statusState = event.status.type.state; 
                 const statusDetail = event.status.type.detail; 
-                const gameDate = event.date; // ISO timestamp string
+                const gameDate = event.date; 
                 const broadcast = comp.broadcasts?.[0]?.names?.[0] || '';
                 const situation = comp.situation ? comp.situation.downDistanceText : '';
 
@@ -642,7 +625,6 @@
                     statusClass = 'final';
                     statusText = 'FINAL';
                 } else {
-                    // Clean up upcoming game text using the ISO date + detail fallback
                     statusText = formatUpcomingTime(gameDate, statusDetail);
                 }
 
@@ -682,6 +664,18 @@
         }
 
         fetchScores();
+
+        setInterval(() => {
+            const statusEl = document.getElementById('update-status');
+            if (statusEl.textContent.includes('Updating')) return;
+
+            countdownTimer--;
+            if (countdownTimer <= 0) {
+                fetchScores();
+            } else {
+                statusEl.textContent = `Live (${countdownTimer}s)`;
+            }
+        }, 1000);
     </script>
 </body>
 </html>
