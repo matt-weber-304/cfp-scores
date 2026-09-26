@@ -474,7 +474,6 @@
                 const data = await response.json();
                 allGamesData = data.events || [];
                 
-                // Parse and display week / season info
                 updateSeasonWeekDisplay(data);
                 updateGlobalStats(allGamesData);
                 renderGames();
@@ -492,15 +491,13 @@
             const weekEl = document.getElementById('week-display');
             try {
                 const weekNum = data.week?.number;
-                const seasonType = data.week?.seasonType; // 2 = regular season, 3 = post season
+                const seasonType = data.week?.seasonType; 
                 const calendar = data.leagues?.[0]?.calendar;
                 
                 let weekLabel = weekNum ? `Week ${weekNum}` : '';
                 if (seasonType === 3) weekLabel = 'Bowl / Postseason';
 
-                // Look for date range in calendar matching current week
                 if (calendar && weekNum) {
-                    // Find standard season calendar entry
                     const seasonEntry = calendar.find(c => c.value == seasonType) || calendar[0];
                     const entries = seasonEntry?.entries || [];
                     const currentEntry = entries.find(e => e.value == weekNum);
@@ -540,13 +537,34 @@
             renderGames();
         }
 
-        function formatUpcomingTime(detailString) {
-            // Converts strings like "Sat, Sep 26, 7:00 PM" into just "Sat, 7:00 PM"
+        function formatUpcomingTime(dateString, detailString) {
+            // Priority 1: Parse accurately using game's real ISO date object if available
+            if (dateString) {
+                try {
+                    const gameDate = new Date(dateString);
+                    if (!isNaN(gameDate)) {
+                        // Format to "Sat, 7:00 PM" style using local time
+                        const weekday = gameDate.toLocaleDateString('en-US', { weekday: 'short' });
+                        const timeStr = gameDate.toLocaleDateString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                        // Extract time part cleanly from localized string if it includes date
+                        const timeOnly = gameDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+                        return `${weekday}, ${timeOnly}`;
+                    }
+                } catch (e) {
+                    // Fallthrough to string cleanup if date parsing fails
+                }
+            }
+
+            // Priority 2: Fallback text string manipulation
             if (!detailString) return '';
-            const parts = detailString.split(', ');
-            if (parts.length >= 3) {
-                // e.g. ["Sat", "Sep 26", "7:00 PM"] -> "Sat, 7:00 PM"
-                return `${parts[0]}, ${parts[parts.length - 1]}`;
+            // ESPN strings look like "Sat, Sep 26, 7:00 PM" or "9/26 - 7:00 PM EDT"
+            if (detailString.includes('-')) {
+                const parts = detailString.split(' - ');
+                if (parts.length > 1) return parts[1].replace(' EDT', '').replace(' EST', '').replace(' CDT', '').replace(' CST', '').replace(' PDT', '').replace(' PST', '').trim();
+            }
+            const commaParts = detailString.split(', ');
+            if (commaParts.length >= 3) {
+                return `${commaParts[0]}, ${commaParts[commaParts.length - 1].replace(/ (EDT|EST|CDT|CST|PDT|PST)/, '')}`;
             }
             return detailString;
         }
@@ -599,6 +617,7 @@
                 const comp = event.competitions[0];
                 const statusState = event.status.type.state; 
                 const statusDetail = event.status.type.detail; 
+                const gameDate = event.date; // ISO timestamp string
                 const broadcast = comp.broadcasts?.[0]?.names?.[0] || '';
                 const situation = comp.situation ? comp.situation.downDistanceText : '';
 
@@ -623,8 +642,8 @@
                     statusClass = 'final';
                     statusText = 'FINAL';
                 } else {
-                    // Clean up upcoming game text to just Day + Time
-                    statusText = formatUpcomingTime(statusDetail);
+                    // Clean up upcoming game text using the ISO date + detail fallback
+                    statusText = formatUpcomingTime(gameDate, statusDetail);
                 }
 
                 const homeRank = homeTeam.curatedRank?.current <= 25 ? `#${homeTeam.curatedRank.current} ` : '';
