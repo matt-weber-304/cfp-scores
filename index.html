@@ -1,0 +1,428 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.4">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;CFB Live Monitor - Compact Grid&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>:root {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--bg-color: #0f172a;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--card-bg: #1e293b;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--card-border: #334155;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--text-main: #f8fafc;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--text-muted: #94a3b8;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--accent-live: #ef4444;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--accent-final: #64748b;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--accent-upcoming: #3b82f6;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>--highlight: #2563eb;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>* {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>box-sizing: border-box;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Inter', sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: var(--bg-color);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-main);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>min-height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>header {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flex-wrap: wrap;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 12px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 0 4px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.logo-area {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>h1 {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.1rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 700;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>letter-spacing: -0.025em;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.controls {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>select, button {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: var(--card-bg);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-main);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid var(--card-border);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 4px 8px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.75rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: inherit;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>select:focus, button:focus {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>outline: 1px solid var(--highlight);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.status-indicator {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 4px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.75rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-muted);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.pulse {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 7px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 7px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: var(--accent-live);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 50%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>animation: pulse 1.5s infinite;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>@keyframes pulse {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>0% { transform: scale(0.95); opacity: 0.9; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>50% { transform: scale(1.3); opacity: 0.4; }</p>
+<p class="p1"><span class="Apple-converted-space">            </span>100% { transform: scale(0.95); opacity: 0.9; }</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Ultra-dense Grid */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.games-grid {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: grid;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 8px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Game Box */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.game-card {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: var(--card-bg);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid var(--card-border);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 7px 9px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: border-color 0.15s ease;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.game-card:hover {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-color: var(--text-muted);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Header Info (Clock &amp; Quarter) */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.game-header {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.65rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 600;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-muted);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 5px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-transform: uppercase;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>letter-spacing: 0.03em;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.game-status.live {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--accent-live);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 3px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.game-status.live::before {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>content: '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: inline-block;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 5px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 5px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: var(--accent-live);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 50%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>animation: pulse 1.5s infinite;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.game-status.final {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--accent-final);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.game-status.upcoming {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--accent-upcoming);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Teams section */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.teams-list {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 3px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.team-row {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.8rem;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.team-info {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>gap: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>white-space: nowrap;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-overflow: ellipsis;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding-right: 4px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.team-logo {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 15px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 15px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>object-fit: contain;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flex-shrink: 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.team-name {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 500;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-overflow: ellipsis;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.team-row.winner .team-name,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.team-row.winner .team-score {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 700;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-main);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.team-row:not(.winner) .team-name,</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.team-row:not(.winner) .team-score {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-muted);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.team-score {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-variant-numeric: tabular-nums;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.85rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>flex-shrink: 0;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* Broadcast / Situation Footer */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.game-footer {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 5px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding-top: 4px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-top: 1px solid rgba(255, 255, 255, 0.05);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: space-between;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.6rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-muted);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.broadcast {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 500;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.situation {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #fbbf24;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 500;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* States */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.loading, .error, .no-games {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>grid-column: 1 / -1;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 30px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--text-muted);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.85rem;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: var(--card-bg);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 6px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid var(--card-border);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>.error {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: var(--accent-live);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;header&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="logo-area"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;h1&gt;CFB Live&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="status-indicator"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="pulse"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;span id="update-status"&gt;Live&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="controls"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;select id="filter-select" onchange="filterGames()"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;option value="all"&gt;All Games&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;option value="live" selected&gt;Live Only&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;option value="top25"&gt;Top 25 Only&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;option value="final"&gt;Finals&lt;/option&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;button onclick="fetchScores()"&gt;Refresh&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;main&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div id="games-container" class="games-grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="loading"&gt;Loading college football scores...&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/main&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let allGamesData = [];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function fetchScores() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const container = document.getElementById('games-container');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const statusEl = document.getElementById('update-status');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>statusEl.textContent = 'Updating...';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>// ESPN public CFB scoreboard endpoint</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (!response.ok) throw new Error('Network response was not ok');</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>const data = await response.json();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>allGamesData = data.events || [];</p>
+<p class="p2"><span class="Apple-converted-space">                </span></p>
+<p class="p1"><span class="Apple-converted-space">                </span>renderGames();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>statusEl.textContent = 'Live';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error("Error fetching scores:", error);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>statusEl.textContent = 'Error updating';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (allGamesData.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>container.innerHTML = `&lt;div class="error"&gt;Unable to load live scores right now. Please check your connection or try refreshing.&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function filterGames() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>renderGames();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function renderGames() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const container = document.getElementById('games-container');</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const filter = document.getElementById('filter-select').value;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!allGamesData || allGamesData.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>container.innerHTML = `&lt;div class="no-games"&gt;No games scheduled or available at the moment.&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>let filtered = allGamesData.filter(event =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const status = event.status.type.state; // 'pre', 'in', 'post'</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const competitions = event.competitions[0];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const homeTeam = competitions.competitors.find(c =&gt; c.homeAway === 'home');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const awayTeam = competitions.competitors.find(c =&gt; c.homeAway === 'away');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const isTop25 = (homeTeam.curatedRank?.current &lt;= 25) || (awayTeam.curatedRank?.current &lt;= 25);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (filter === 'live') return status === 'in';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (filter === 'final') return status === 'post';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (filter === 'top25') return isTop25;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return true; // 'all'</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// If user selected 'Live Only' but there are no live games, fallback or show message</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (filtered.length === 0) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>container.innerHTML = `&lt;div class="no-games"&gt;No games match the selected filter ("${filter}"). Try switching to "All Games".&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>container.innerHTML = filtered.map(event =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const comp = event.competitions[0];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const statusState = event.status.type.state; // pre, in, post</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const statusDetail = event.status.type.detail; // e.g., "3rd - 4:12", "Final", "Sat, 7:00 PM"</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const broadcast = comp.broadcasts?.[0]?.names?.[0] || '';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const situation = comp.situation ? comp.situation.downDistanceText : '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>const homeTeam = comp.competitors.find(c =&gt; c.homeAway === 'home');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const awayTeam = comp.competitors.find(c =&gt; c.homeAway === 'away');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>const homeScore = parseInt(homeTeam.score || 0);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const awayScore = parseInt(awayTeam.score || 0);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>let homeWinner = false;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let awayWinner = false;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (statusState === 'post') {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>if (homeScore &gt; awayScore) homeWinner = true;</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>else if (awayScore &gt; homeScore) awayWinner = true;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// Format status badge class</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let statusClass = 'upcoming';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>let statusText = statusDetail;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>if (statusState === 'in') {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>statusClass = 'live';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>} else if (statusState === 'post') {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>statusClass = 'final';</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>statusText = 'FINAL';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>const homeRank = homeTeam.curatedRank?.current &lt;= 25 ? `#${homeTeam.curatedRank.current} ` : '';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const awayRank = awayTeam.curatedRank?.current &lt;= 25 ? `#${awayTeam.curatedRank.current} ` : '';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>return `</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;div class="game-card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="game-header"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="game-status ${statusClass}"&gt;${statusText}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="broadcast"&gt;${broadcast}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="teams-list"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="team-row ${awayWinner ? 'winner' : ''}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="team-info"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;img class="team-logo" src="${awayTeam.team.logo || ''}" alt="" onerror="this.style.display='none'"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;span class="team-name"&gt;${awayRank}${awayTeam.team.shortDisplayName || awayTeam.team.name}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="team-score"&gt;${awayTeam.score ?? '0'}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;div class="team-row ${homeWinner ? 'winner' : ''}"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;div class="team-info"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;img class="team-logo" src="${homeTeam.team.logo || ''}" alt="" onerror="this.style.display='none'"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                    </span>&lt;span class="team-name"&gt;${homeRank}${homeTeam.team.shortDisplayName || homeTeam.team.name}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                                </span>&lt;span class="team-score"&gt;${homeTeam.score ?? '0'}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>${situation || (statusState === 'in' &amp;&amp; event.status.period) ? `</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;div class="game-footer"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span class="situation"&gt;${situation || ''}&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                            </span>&lt;span&gt;&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;` : ''}</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}).join('');</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Initial fetch</p>
+<p class="p1"><span class="Apple-converted-space">        </span>fetchScores();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Auto-refresh every 20 seconds for live monitoring</p>
+<p class="p1"><span class="Apple-converted-space">        </span>setInterval(fetchScores, 20000);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
