@@ -98,10 +98,10 @@
             100% { transform: scale(0.95); opacity: 0.9; }
         }
 
-        /* Ultra-dense Grid */
+        /* Ultra-dense Grid: Target approx 4 columns by using a flexible minimum column size */
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 8px;
         }
 
@@ -110,7 +110,7 @@
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 6px;
-            padding: 7px 9px;
+            padding: 6px 8px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -127,10 +127,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 600;
             color: var(--text-muted);
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 0.03em;
         }
@@ -140,6 +140,7 @@
             display: flex;
             align-items: center;
             gap: 3px;
+            font-size: 0.65rem;
         }
 
         .game-status.live::before {
@@ -154,10 +155,14 @@
 
         .game-status.final {
             color: var(--accent-final);
+            font-size: 0.65rem;
         }
 
         .game-status.upcoming {
-            color: var(--accent-upcoming);
+            color: var(--text-muted);
+            font-size: 0.55rem; /* Smaller font for upcoming dates/times */
+            text-transform: none; /* Keep natural capitalization for dates like "Sat, 7:00 PM" */
+            font-weight: 500;
         }
 
         /* Teams section */
@@ -171,13 +176,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
         }
 
         .team-info {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -185,8 +190,8 @@
         }
 
         .team-logo {
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             object-fit: contain;
             flex-shrink: 0;
         }
@@ -210,18 +215,18 @@
 
         .team-score {
             font-variant-numeric: tabular-nums;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             flex-shrink: 0;
         }
 
         /* Broadcast / Situation Footer */
         .game-footer {
-            margin-top: 5px;
-            padding-top: 4px;
+            margin-top: 4px;
+            padding-top: 3px;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             justify-content: space-between;
-            font-size: 0.6rem;
+            font-size: 0.58rem;
             color: var(--text-muted);
         }
 
@@ -263,8 +268,8 @@
         </div>
         <div class="controls">
             <select id="filter-select" onchange="filterGames()">
-                <option value="all">All Games</option>
-                <option value="live" selected>Live Only</option>
+                <option value="all" selected>All Games</option>
+                <option value="live">Live Only</option>
                 <option value="top25">Top 25 Only</option>
                 <option value="final">Finals</option>
             </select>
@@ -287,7 +292,6 @@
             statusEl.textContent = 'Updating...';
 
             try {
-                // ESPN public CFB scoreboard endpoint targeting all FBS teams (groups=80)
                 const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80&limit=300');
                 if (!response.ok) throw new Error('Network response was not ok');
                 
