@@ -83,6 +83,36 @@
             outline: 1px solid var(--highlight);
         }
 
+        /* Wake Lock Toggle Switch Button */
+        .wake-lock-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .wake-lock-btn.active {
+            background-color: rgba(37, 99, 235, 0.2);
+            border-color: var(--highlight);
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .wake-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--text-muted);
+        }
+
+        .wake-lock-btn.active .wake-dot {
+            background-color: #22c55e;
+            box-shadow: 0 0 6px #22c55e;
+        }
+
         .status-indicator {
             display: flex;
             align-items: center;
@@ -141,7 +171,7 @@
         .stat-box.upcoming .stat-value { color: var(--accent-upcoming); }
         .stat-box.total .stat-value { color: var(--text-main); }
 
-        /* Responsive Grid: Perfectly balances tablet (3 cols) and desktop (~4-5 cols) */
+        /* Responsive Grid */
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -208,7 +238,7 @@
             font-weight: 500;
         }
 
-        /* Teams section - optimized for legibility */
+        /* Teams section */
         .teams-list {
             display: flex;
             flex-direction: column;
@@ -275,7 +305,7 @@
 
         .broadcast {
             font-weight: 400;
-            font-size: 0.58rem; /* Smaller, cleaner broadcast text */
+            font-size: 0.58rem;
             color: #64748b;
         }
 
@@ -313,6 +343,12 @@
                 </div>
             </div>
             <div class="controls">
+                <!-- Stay Awake Toggle Button -->
+                <button id="wake-lock-btn" class="wake-lock-btn" onclick="toggleWakeLock()">
+                    <div class="wake-dot"></div>
+                    <span id="wake-btn-text">Stay Awake: Off</span>
+                </button>
+
                 <!-- Conference Filter -->
                 <select id="conference-select" onchange="filterGames()">
                     <option value="all" selected>All Conferences</option>
@@ -369,6 +405,48 @@
 
     <script>
         let allGamesData = [];
+        let wakeLock = null;
+
+        // Toggle Screen Wake Lock on user click
+        async function toggleWakeLock() {
+            const btn = document.getElementById('wake-lock-btn');
+            const btnText = document.getElementById('wake-btn-text');
+
+            if (!('wakeLock' in navigator)) {
+                alert('Screen Wake Lock is not supported by your browser.');
+                return;
+            }
+
+            try {
+                if (wakeLock !== null) {
+                    await wakeLock.release();
+                    wakeLock = null;
+                    btn.classList.remove('active');
+                    btnText.textContent = 'Stay Awake: Off';
+                } else {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    btn.classList.add('active');
+                    btnText.textContent = 'Stay Awake: On';
+
+                    wakeLock.addEventListener('release', () => {
+                        wakeLock = null;
+                        btn.classList.remove('active');
+                        btnText.textContent = 'Stay Awake: Off';
+                    });
+                }
+            } catch (err) {
+                console.error(`${err.name}, ${err.message}`);
+                btn.classList.remove('active');
+                btnText.textContent = 'Stay Awake: Off';
+            }
+        }
+
+        // Re-acquire wake lock if user tabs back in and it was previously active
+        document.addEventListener('visibilitychange', async () => {
+            if (wakeLock === null && document.visibilityState === 'visible') {
+                // If user wants it active, they can tap it back on, or we can leave it manual
+            }
+        });
 
         async function fetchScores() {
             const container = document.getElementById('games-container');
@@ -525,7 +603,6 @@
         }
 
         fetchScores();
-        setInterval(fetchScores, 20000);
     </script>
 </body>
 </html>
