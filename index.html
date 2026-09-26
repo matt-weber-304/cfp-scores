@@ -346,6 +346,7 @@
                     <span id="wake-btn-text">Stay Awake: Off</span>
                 </button>
 
+                <!-- Conference Filter -->
                 <select id="conference-select" onchange="filterGames()">
                     <option value="all" selected>All Conferences</option>
                     <option value="8">SEC</option>
@@ -361,8 +362,9 @@
                     <option value="18">FBS Independents</option>
                 </select>
 
+                <!-- Status / Type Filter -->
                 <select id="filter-select" onchange="filterGames()">
-                    <option value="all" selected>All Games Status</option>
+                    <option value="all" selected>All Games</option>
                     <option value="live">Live Only</option>
                     <option value="top25">Top 25 Only</option>
                     <option value="final">Finals Only</option>
@@ -440,6 +442,7 @@
             statusEl.textContent = 'Updating...';
 
             try {
+                // Fetching all games unconstrained
                 const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?limit=400&t=${new Date().getTime()}`);
                 if (!response.ok) throw new Error('Network response was not ok');
                 
@@ -553,6 +556,7 @@
                 const awayTeam = competitions.competitors.find(c => c.homeAway === 'away');
                 const isTop25 = (homeTeam.curatedRank?.current <= 25) || (awayTeam.curatedRank?.current <= 25);
 
+                // Status Filter Match
                 let matchesStatus = true;
                 if (statusFilter === 'live') matchesStatus = (statusState === 'in');
                 else if (statusFilter === 'final') matchesStatus = (statusState === 'post');
@@ -560,6 +564,7 @@
 
                 if (!matchesStatus) return false;
 
+                // Conference Filter Match
                 if (confFilter === 'all') return true;
 
                 const homeGroups = homeTeam.team.groups?.id || '';
