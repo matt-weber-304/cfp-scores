@@ -51,13 +51,24 @@
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         h1 {
             font-size: 1.15rem;
             font-weight: 700;
             letter-spacing: -0.025em;
+        }
+
+        .week-display {
+            font-size: 0.75rem;
+            background-color: #172033;
+            border: 1px solid var(--card-border);
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
         .controls {
@@ -346,6 +357,7 @@
         <div class="top-row">
             <div class="logo-area">
                 <h1>Matt's CFP Scoreboard</h1>
+                <div id="week-display" class="week-display">Loading week...</div>
                 <div class="status-indicator">
                     <div class="pulse"></div>
                     <span id="update-status">Live</span>
@@ -462,6 +474,8 @@
                 const data = await response.json();
                 allGamesData = data.events || [];
                 
+                // Parse and display week / season info
+                updateSeasonWeekDisplay(data);
                 updateGlobalStats(allGamesData);
                 renderGames();
                 statusEl.textContent = 'Live';
@@ -471,6 +485,36 @@
                 if (allGamesData.length === 0) {
                     container.innerHTML = `<div class="error">Unable to load live scores right now. Please check your connection or try refreshing.</div>`;
                 }
+            }
+        }
+
+        function updateSeasonWeekDisplay(data) {
+            const weekEl = document.getElementById('week-display');
+            try {
+                const weekNum = data.week?.number;
+                const seasonType = data.week?.seasonType; // 2 = regular season, 3 = post season
+                const calendar = data.leagues?.[0]?.calendar;
+                
+                let weekLabel = weekNum ? `Week ${weekNum}` : '';
+                if (seasonType === 3) weekLabel = 'Bowl / Postseason';
+
+                // Look for date range in calendar matching current week
+                if (calendar && weekNum) {
+                    // Find standard season calendar entry
+                    const seasonEntry = calendar.find(c => c.value == seasonType) || calendar[0];
+                    const entries = seasonEntry?.entries || [];
+                    const currentEntry = entries.find(e => e.value == weekNum);
+                    
+                    if (currentEntry && currentEntry.startDate && currentEntry.endDate) {
+                        const start = new Date(currentEntry.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        const end = new Date(currentEntry.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        weekEl.textContent = `${weekLabel} (${start} - ${end})`;
+                        return;
+                    }
+                }
+                weekEl.textContent = weekLabel || 'Current Week';
+            } catch (e) {
+                document.getElementById('week-display').textContent = 'College Football';
             }
         }
 
@@ -494,6 +538,17 @@
 
         function filterGames() {
             renderGames();
+        }
+
+        function formatUpcomingTime(detailString) {
+            // Converts strings like "Sat, Sep 26, 7:00 PM" into just "Sat, 7:00 PM"
+            if (!detailString) return '';
+            const parts = detailString.split(', ');
+            if (parts.length >= 3) {
+                // e.g. ["Sat", "Sep 26", "7:00 PM"] -> "Sat, 7:00 PM"
+                return `${parts[0]}, ${parts[parts.length - 1]}`;
+            }
+            return detailString;
         }
 
         function renderGames() {
@@ -567,6 +622,9 @@
                 } else if (statusState === 'post') {
                     statusClass = 'final';
                     statusText = 'FINAL';
+                } else {
+                    // Clean up upcoming game text to just Day + Time
+                    statusText = formatUpcomingTime(statusDetail);
                 }
 
                 const homeRank = homeTeam.curatedRank?.current <= 25 ? `#${homeTeam.curatedRank.current} ` : '';
