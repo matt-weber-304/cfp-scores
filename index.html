@@ -598,13 +598,11 @@
             const isAlreadyPrimary = primaryPinnedIds.includes(gameId);
             const isAlreadySecondary = secondaryPinnedIds.includes(gameId);
 
-            // If clicking the active button again, unpin it entirely
             if ((type === 'primary' && isAlreadyPrimary) || (type === 'secondary' && isAlreadySecondary)) {
                 removePin(gameId);
                 return;
             }
 
-            // Enforce strict limits before adding new pins
             if (type === 'primary') {
                 if (!isAlreadyPrimary && primaryPinnedIds.length >= 2) {
                     alert('Limit Reached: You can only pin a maximum of 2 Large Games.');
@@ -617,11 +615,9 @@
                 }
             }
 
-            // Remove from both lists first to prevent duplicates across categories
             primaryPinnedIds = primaryPinnedIds.filter(id => id !== gameId);
             secondaryPinnedIds = secondaryPinnedIds.filter(id => id !== gameId);
 
-            // Add to target list
             if (type === 'primary') {
                 primaryPinnedIds.push(gameId);
             } else if (type === 'secondary') {
@@ -678,6 +674,7 @@
             statusEl.textContent = 'Updating...';
 
             try {
+                // Removed explicit date restrictions so it pulls the current active football schedule week cleanly
                 const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80&limit=300&t=${new Date().getTime()}`);
                 if (!response.ok) throw new Error('Network response was not ok');
                 
@@ -892,7 +889,7 @@
             const confFilter = document.getElementById('conference-select').value;
 
             if (!allGamesData || allGamesData.length === 0) {
-                container.innerHTML = `<div class="no-games">No games scheduled or available at the moment.</div>`;
+                container.innerHTML = `<div class="no-games">No games scheduled or available at the moment. (Mid-week between game slates)</div>`;
                 return;
             }
 
