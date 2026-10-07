@@ -16,6 +16,8 @@
             --accent-final: #94a3b8;   
             --accent-upcoming: #60a5fa;
             --highlight: #3b82f6;
+            --star-primary: #facc15;   /* Gold for Primary Pins */
+            --star-secondary: #38bdf8; /* Blue for Secondary Pins */
         }
 
         * {
@@ -92,6 +94,17 @@
 
         select:focus, button:focus {
             outline: 1px solid var(--highlight);
+        }
+
+        .follow-toggle-btn {
+            background-color: #1e3a8a;
+            border-color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .follow-toggle-btn.active {
+            background-color: #2563eb;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
         }
 
         .wake-lock-btn {
@@ -186,12 +199,32 @@
         .stat-box.upcoming .stat-value { color: var(--accent-upcoming); }
         .stat-box.total .stat-value { color: var(--text-main); }
 
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin: 16px 0 8px 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .games-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 10px;
         }
 
+        .hero-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        /* Game Box */
         .game-card {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -203,6 +236,12 @@
             position: relative;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
             transition: border-color 0.15s ease;
+        }
+
+        .game-card.hero-card {
+            padding: 12px 14px;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid var(--highlight);
         }
 
         .game-card:hover {
@@ -221,6 +260,10 @@
             letter-spacing: 0.03em;
         }
 
+        .hero-card .game-header {
+            font-size: 0.78rem;
+        }
+
         .game-status.live {
             color: var(--accent-live);
             display: flex;
@@ -228,6 +271,10 @@
             gap: 4px;
             font-size: 0.72rem;
             font-weight: 700;
+        }
+
+        .hero-card .game-status.live {
+            font-size: 0.82rem;
         }
 
         .game-status.live::before {
@@ -259,11 +306,20 @@
             gap: 4px;
         }
 
+        .hero-card .teams-list {
+            gap: 6px;
+            margin-top: 4px;
+        }
+
         .team-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.88rem;
+        }
+
+        .hero-card .team-row {
+            font-size: 1.05rem;
         }
 
         .team-info {
@@ -281,6 +337,11 @@
             height: 16px;
             object-fit: contain;
             flex-shrink: 0;
+        }
+
+        .hero-card .team-logo {
+            width: 22px;
+            height: 22px;
         }
 
         .team-name {
@@ -306,10 +367,58 @@
             flex-shrink: 0;
         }
 
+        .hero-card .team-score {
+            font-size: 1.15rem;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
         .broadcast {
             font-weight: 500;
             font-size: 0.6rem;
             color: #94a3b8;
+        }
+
+        .hero-card .broadcast {
+            font-size: 0.7rem;
+        }
+
+        .pin-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        .action-btn {
+            background: #27354f;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            font-size: 0.65rem;
+            padding: 3px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .action-btn:hover {
+            background: #334155;
+        }
+
+        .action-btn.primary-pin {
+            color: var(--star-primary);
+            border-color: rgba(250, 204, 21, 0.4);
+        }
+
+        .action-btn.secondary-pin {
+            color: var(--star-secondary);
+            border-color: rgba(56, 189, 248, 0.4);
         }
 
         .loading, .error, .no-games {
@@ -346,7 +455,8 @@
                     <span id="wake-btn-text">Stay Awake: Off</span>
                 </button>
 
-                <!-- Conference Filter -->
+                <button id="follow-screen-btn" class="follow-toggle-btn" onclick="toggleFollowScreen()">⭐ View Followed Games</button>
+
                 <select id="conference-select" onchange="filterGames()">
                     <option value="all" selected>All Conferences</option>
                     <option value="SEC">SEC</option>
@@ -360,7 +470,6 @@
                     <option value="MAC">MAC</option>
                 </select>
 
-                <!-- Status / Type Filter -->
                 <select id="filter-select" onchange="filterGames()">
                     <option value="all" selected>All Games</option>
                     <option value="live">Live Only</option>
@@ -392,7 +501,7 @@
     </header>
 
     <main>
-        <div id="games-container" class="games-grid">
+        <div id="dynamic-content">
             <div class="loading">Loading college football scores...</div>
         </div>
     </main>
@@ -401,6 +510,11 @@
         let allGamesData = [];
         let wakeLock = null;
         let countdownTimer = 20;
+        let showOnlyFollowed = false;
+        
+        // Storage arrays of game IDs
+        let primaryPinnedIds = JSON.parse(localStorage.getItem('matt_cfb_primary')) || [];
+        let secondaryPinnedIds = JSON.parse(localStorage.getItem('matt_cfb_secondary')) || [];
 
         async function toggleWakeLock() {
             const btn = document.getElementById('wake-lock-btn');
@@ -435,12 +549,76 @@
             }
         }
 
+        function setPin(gameId, type) {
+            // Remove from both first to avoid duplicates
+            primaryPinnedIds = primaryPinnedIds.filter(id => id !== gameId);
+            secondaryPinnedIds = secondaryPinnedIds.filter(id => id !== gameId);
+
+            if (type === 'primary') {
+                if (primaryPinnedIds.length >= 4) {
+                    alert('You can pin up to 4 primary large games.');
+                    return;
+                }
+                primaryPinnedIds.push(gameId);
+            } else if (type === 'secondary') {
+                if (secondaryPinnedIds.length >= 6) {
+                    alert('You can pin up to 6 secondary games.');
+                    return;
+                }
+                secondaryPinnedIds.push(gameId);
+            }
+
+            savePins();
+            renderGames();
+        }
+
+        function removePin(gameId) {
+            primaryPinnedIds = primaryPinnedIds.filter(id => id !== gameId);
+            secondaryPinnedIds = secondaryPinnedIds.filter(id => id !== gameId);
+            savePins();
+            renderGames();
+        }
+
+        function movePin(gameId, type, direction) {
+            let list = type === 'primary' ? primaryPinnedIds : secondaryPinnedIds;
+            const index = list.indexOf(gameId);
+            if (index < 0) return;
+
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= list.length) return;
+
+            // Swap positions
+            const temp = list[index];
+            list[index] = list[newIndex];
+            list[newIndex] = temp;
+
+            savePins();
+            renderGames();
+        }
+
+        function savePins() {
+            localStorage.setItem('matt_cfb_primary', JSON.stringify(primaryPinnedIds));
+            localStorage.setItem('matt_cfb_secondary', JSON.stringify(secondaryPinnedIds));
+        }
+
+        function toggleFollowScreen() {
+            showOnlyFollowed = !showOnlyFollowed;
+            const btn = document.getElementById('follow-screen-btn');
+            if (showOnlyFollowed) {
+                btn.classList.add('active');
+                btn.textContent = '📋 Show All Games';
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '⭐ View Followed Games';
+            }
+            renderGames();
+        }
+
         async function fetchScores() {
             const statusEl = document.getElementById('update-status');
             statusEl.textContent = 'Updating...';
 
             try {
-                // Using group 80 to pull all FBS games cleanly without restrictions
                 const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/college-football/scoreboard?groups=80&limit=300&t=${new Date().getTime()}`);
                 if (!response.ok) throw new Error('Network response was not ok');
                 
@@ -456,7 +634,7 @@
             } catch (error) {
                 console.error("Error fetching scores:", error);
                 statusEl.textContent = 'Error updating';
-                const container = document.getElementById('games-container');
+                const container = document.getElementById('dynamic-content');
                 if (allGamesData.length === 0) {
                     container.innerHTML = `<div class="error">Unable to load live scores right now. Please check your connection or try refreshing.</div>`;
                 }
@@ -524,7 +702,6 @@
                     }
                 } catch (e) {}
             }
-
             if (!detailString) return '';
             if (detailString.includes('-')) {
                 const parts = detailString.split(' - ');
@@ -537,8 +714,97 @@
             return detailString;
         }
 
+        function buildCardHtml(event, isHero = false, inFollowScreen = false) {
+            const comp = event.competitions[0];
+            const gameId = event.id;
+            const statusState = event.status.type.state; 
+            const statusDetail = event.status.type.detail; 
+            const gameDate = event.date; 
+            const broadcast = comp.broadcasts?.[0]?.names?.[0] || '';
+
+            const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
+            const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
+
+            const homeScore = parseInt(homeTeam.score || 0);
+            const awayScore = parseInt(awayTeam.score || 0);
+
+            let homeWinner = false;
+            let awayWinner = false;
+            if (statusState === 'post') {
+                if (homeScore > awayScore) homeWinner = true;
+                else if (awayScore > homeScore) awayWinner = true;
+            }
+
+            let statusClass = 'upcoming';
+            let statusText = statusDetail;
+            if (statusState === 'in') {
+                statusClass = 'live';
+            } else if (statusState === 'post') {
+                statusClass = 'final';
+                statusText = 'FINAL';
+            } else {
+                statusText = formatUpcomingTime(gameDate, statusDetail);
+            }
+
+            const homeRank = homeTeam.curatedRank?.current <= 25 ? `#${homeTeam.curatedRank.current} ` : '';
+            const awayRank = awayTeam.curatedRank?.current <= 25 ? `#${awayTeam.curatedRank.current} ` : '';
+            
+            const isPrimary = primaryPinnedIds.includes(gameId);
+            const isSecondary = secondaryPinnedIds.includes(gameId);
+
+            let actionButtonsHtml = '';
+            if (inFollowScreen) {
+                actionButtonsHtml = `
+                    <div class="pin-group">
+                        <button class="action-btn" onclick="movePin('${gameId}', '${isHero ? 'primary' : 'secondary'}', -1)" title="Move Up">⬆️</button>
+                        <button class="action-btn" onclick="movePin('${gameId}', '${isHero ? 'primary' : 'secondary'}', 1)" title="Move Down">⬇️</button>
+                        <button class="action-btn" onclick="setPin('${gameId}', '${isHero ? 'secondary' : 'primary'}')" title="Switch Size">${isHero ? '📉 Make Small' : '📈 Make Large'}</button>
+                        <button class="action-btn" style="background:#7f1d1d; border-color:#991b1b;" onclick="removePin('${gameId}')">❌ Remove</button>
+                    </div>
+                `;
+            } else {
+                actionButtonsHtml = `
+                    <div class="pin-group">
+                        <button class="action-btn primary-pin ${isPrimary ? 'active' : ''}" onclick="setPin('${gameId}', 'primary')">⭐ Pin Large</button>
+                        <button class="action-btn secondary-pin ${isSecondary ? 'active' : ''}" onclick="setPin('${gameId}', 'secondary')">⭐ Pin Small</button>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="game-card ${isHero ? 'hero-card' : ''}">
+                    <div class="game-header">
+                        <span class="game-status ${statusClass}">${statusText}</span>
+                        <span class="broadcast">${broadcast}</span>
+                    </div>
+                    <div class="teams-list">
+                        <div class="team-row ${awayWinner ? 'winner' : ''}">
+                            <div class="team-info">
+                                <img class="team-logo" src="${awayTeam.team.logo || ''}" alt="" onerror="this.style.display='none'">
+                                <span class="team-name">${awayRank}${awayTeam.team.shortDisplayName || awayTeam.team.name}</span>
+                            </div>
+                            <span class="team-score">${awayTeam.score ?? '0'}</span>
+                        </div>
+                        <div class="team-row ${homeWinner ? 'winner' : ''}">
+                            <div class="team-info">
+                                <img class="team-logo" src="${homeTeam.team.logo || ''}" alt="" onerror="this.style.display='none'">
+                                <span class="team-name">${homeRank}${homeTeam.team.shortDisplayName || homeTeam.team.name}</span>
+                            </div>
+                            <span class="team-score">${homeTeam.score ?? '0'}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <span style="font-size: 0.6rem; color: var(--text-muted);">
+                            ${isPrimary ? '⭐ Large Pin' : isSecondary ? '⭐ Small Pin' : ''}
+                        </span>
+                        ${actionButtonsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
         function renderGames() {
-            const container = document.getElementById('games-container');
+            const container = document.getElementById('dynamic-content');
             const statusFilter = document.getElementById('filter-select').value;
             const confFilter = document.getElementById('conference-select').value;
 
@@ -547,6 +813,41 @@
                 return;
             }
 
+            // Follow Screen View
+            if (showOnlyFollowed) {
+                const primaryEvents = primaryPinnedIds.map(id => allGamesData.find(e => e.id === id)).filter(Boolean);
+                const secondaryEvents = secondaryPinnedIds.map(id => allGamesData.find(e => e.id === id)).filter(Boolean);
+
+                if (primaryEvents.length === 0 && secondaryEvents.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-games">
+                            <p style="margin-bottom: 8px; font-size: 1rem; color: #fff;">No games pinned to your Follow Screen yet!</p>
+                            <p>Click <b>Pin Large</b> or <b>Pin Small</b> on any game card to design your custom command center layout.</p>
+                        </div>`;
+                    return;
+                }
+
+                let html = '';
+
+                if (primaryEvents.length > 0) {
+                    html += `<div class="section-title"><span>⭐ Primary Large Featured Games</span></div>`;
+                    html += `<div class="hero-grid">`;
+                    html += primaryEvents.map(e => buildCardHtml(e, true, true)).join('');
+                    html += `</div>`;
+                }
+
+                if (secondaryEvents.length > 0) {
+                    html += `<div class="section-title"><span>⭐ Secondary Small Ticker Games</span></div>`;
+                    html += `<div class="games-grid">`;
+                    html += secondaryEvents.map(e => buildCardHtml(e, false, true)).join('');
+                    html += `</div>`;
+                }
+
+                container.innerHTML = html;
+                return;
+            }
+
+            // Standard View with Filters
             let filtered = allGamesData.filter(event => {
                 const statusState = event.status.type.state; 
                 const competitions = event.competitions[0];
@@ -554,7 +855,6 @@
                 const awayTeam = competitions.competitors.find(c => c.homeAway === 'away');
                 const isTop25 = (homeTeam.curatedRank?.current <= 25) || (awayTeam.curatedRank?.current <= 25);
 
-                // Status / Type Filter Match
                 let matchesStatus = true;
                 if (statusFilter === 'live') matchesStatus = (statusState === 'in');
                 else if (statusFilter === 'final') matchesStatus = (statusState === 'post');
@@ -562,82 +862,20 @@
 
                 if (!matchesStatus) return false;
 
-                // Conference Filter Match (checks team names / affiliations explicitly)
                 if (confFilter === 'all') return true;
 
                 const homeText = (homeTeam.team.name + ' ' + homeTeam.team.shortDisplayName + ' ' + (homeTeam.team.conference?.name || '')).toLowerCase();
                 const awayText = (awayTeam.team.name + ' ' + awayTeam.team.shortDisplayName + ' ' + (awayTeam.team.conference?.name || '')).toLowerCase();
                 
-                // Match exact conference selection string
-                const matchesConf = homeText.includes(confFilter.toLowerCase()) || awayText.includes(confFilter.toLowerCase());
-                
-                return matchesConf;
+                return homeText.includes(confFilter.toLowerCase()) || awayText.includes(confFilter.toLowerCase());
             });
 
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="no-games">No games match your selected filters. Try resetting conferences or status filters.</div>`;
+                container.innerHTML = `<div class="no-games">No games match your selected filters. Try resetting conference or status filters.</div>`;
                 return;
             }
 
-            container.innerHTML = filtered.map(event => {
-                const comp = event.competitions[0];
-                const statusState = event.status.type.state; 
-                const statusDetail = event.status.type.detail; 
-                const gameDate = event.date; 
-                const broadcast = comp.broadcasts?.[0]?.names?.[0] || '';
-
-                const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
-                const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
-
-                const homeScore = parseInt(homeTeam.score || 0);
-                const awayScore = parseInt(awayTeam.score || 0);
-
-                let homeWinner = false;
-                let awayWinner = false;
-                if (statusState === 'post') {
-                    if (homeScore > awayScore) homeWinner = true;
-                    else if (awayScore > homeScore) awayWinner = true;
-                }
-
-                let statusClass = 'upcoming';
-                let statusText = statusDetail;
-                if (statusState === 'in') {
-                    statusClass = 'live';
-                } else if (statusState === 'post') {
-                    statusClass = 'final';
-                    statusText = 'FINAL';
-                } else {
-                    statusText = formatUpcomingTime(gameDate, statusDetail);
-                }
-
-                const homeRank = homeTeam.curatedRank?.current <= 25 ? `#${homeTeam.curatedRank.current} ` : '';
-                const awayRank = awayTeam.curatedRank?.current <= 25 ? `#${awayTeam.curatedRank.current} ` : '';
-
-                return `
-                    <div class="game-card">
-                        <div class="game-header">
-                            <span class="game-status ${statusClass}">${statusText}</span>
-                            <span class="broadcast">${broadcast}</span>
-                        </div>
-                        <div class="teams-list">
-                            <div class="team-row ${awayWinner ? 'winner' : ''}">
-                                <div class="team-info">
-                                    <img class="team-logo" src="${awayTeam.team.logo || ''}" alt="" onerror="this.style.display='none'">
-                                    <span class="team-name">${awayRank}${awayTeam.team.shortDisplayName || awayTeam.team.name}</span>
-                                </div>
-                                <span class="team-score">${awayTeam.score ?? '0'}</span>
-                            </div>
-                            <div class="team-row ${homeWinner ? 'winner' : ''}">
-                                <div class="team-info">
-                                    <img class="team-logo" src="${homeTeam.team.logo || ''}" alt="" onerror="this.style.display='none'">
-                                    <span class="team-name">${homeRank}${homeTeam.team.shortDisplayName || homeTeam.team.name}</span>
-                                </div>
-                                <span class="team-score">${homeTeam.score ?? '0'}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            container.innerHTML = `<div class="games-grid">` + filtered.map(e => buildCardHtml(e, false, false)).join('') + `</div>`;
         }
 
         fetchScores();
