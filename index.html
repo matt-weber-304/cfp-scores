@@ -214,7 +214,6 @@
             gap: 10px;
         }
 
-        /* Immersive Expanded Hero Grid (Takes more vertical space with detailed metrics) */
         .hero-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
@@ -222,7 +221,6 @@
             margin-bottom: 16px;
         }
 
-        /* Game Box */
         .game-card {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -238,7 +236,7 @@
 
         .game-card.hero-card {
             padding: 20px 22px;
-            min-height: 220px; /* Takes significantly more vertical space */
+            min-height: 220px;
             background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
             border: 2px solid var(--highlight);
         }
@@ -384,7 +382,6 @@
             font-size: 1.4rem;
         }
 
-        /* Expanded Details Box for Hero Cards */
         .hero-details-box {
             background-color: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -456,7 +453,8 @@
         }
 
         .action-btn.primary-pin.active {
-            background-color: rgba(250, 204, 21, 0.2);
+            background-color: rgba(250, 204, 21, 0.3);
+            font-weight: 700;
         }
 
         .action-btn.secondary-pin {
@@ -465,7 +463,8 @@
         }
 
         .action-btn.secondary-pin.active {
-            background-color: rgba(56, 189, 248, 0.2);
+            background-color: rgba(56, 189, 248, 0.3);
+            font-weight: 700;
         }
 
         .loading, .error, .no-games {
@@ -599,27 +598,33 @@
             const isAlreadyPrimary = primaryPinnedIds.includes(gameId);
             const isAlreadySecondary = secondaryPinnedIds.includes(gameId);
 
-            // If clicking active pin button, unpin it entirely
+            // If clicking the active button again, unpin it entirely
             if ((type === 'primary' && isAlreadyPrimary) || (type === 'secondary' && isAlreadySecondary)) {
                 removePin(gameId);
                 return;
             }
 
-            // Remove from both lists first
+            // Enforce strict limits before adding new pins
+            if (type === 'primary') {
+                if (!isAlreadyPrimary && primaryPinnedIds.length >= 2) {
+                    alert('Limit Reached: You can only pin a maximum of 2 Large Games.');
+                    return;
+                }
+            } else if (type === 'secondary') {
+                if (!isAlreadySecondary && secondaryPinnedIds.length >= 4) {
+                    alert('Limit Reached: You can only pin a maximum of 4 Small Games.');
+                    return;
+                }
+            }
+
+            // Remove from both lists first to prevent duplicates across categories
             primaryPinnedIds = primaryPinnedIds.filter(id => id !== gameId);
             secondaryPinnedIds = secondaryPinnedIds.filter(id => id !== gameId);
 
+            // Add to target list
             if (type === 'primary') {
-                if (primaryPinnedIds.length >= 2) {
-                    alert('You can only pin a maximum of 2 Large Games.');
-                    return;
-                }
                 primaryPinnedIds.push(gameId);
             } else if (type === 'secondary') {
-                if (secondaryPinnedIds.length >= 4) {
-                    alert('You can only pin a maximum of 4 Small Games.');
-                    return;
-                }
                 secondaryPinnedIds.push(gameId);
             }
 
@@ -808,7 +813,6 @@
             const isPrimary = primaryPinnedIds.includes(gameId);
             const isSecondary = secondaryPinnedIds.includes(gameId);
 
-            // Detailed progress block for Immersive Hero Cards
             let heroDetailsHtml = '';
             if (isHero) {
                 let ballPossessionText = 'None';
@@ -892,7 +896,6 @@
                 return;
             }
 
-            // Follow Screen View
             if (showOnlyFollowed) {
                 const primaryEvents = primaryPinnedIds.map(id => allGamesData.find(e => e.id === id)).filter(Boolean);
                 const secondaryEvents = secondaryPinnedIds.map(id => allGamesData.find(e => e.id === id)).filter(Boolean);
@@ -926,7 +929,6 @@
                 return;
             }
 
-            // Standard View with Filters
             let filtered = allGamesData.filter(event => {
                 const statusState = event.status.type.state; 
                 const competitions = event.competitions[0];
@@ -959,7 +961,6 @@
 
         fetchScores();
 
-        // Background ticker updates scores and details every 20 seconds seamlessly without full page reloads
         setInterval(() => {
             const statusEl = document.getElementById('update-status');
             if (statusEl.textContent.includes('Updating')) return;
