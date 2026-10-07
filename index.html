@@ -16,8 +16,8 @@
             --accent-final: #94a3b8;   
             --accent-upcoming: #60a5fa;
             --highlight: #3b82f6;
-            --star-primary: #facc15;   /* Gold for Primary Pins */
-            --star-secondary: #38bdf8; /* Blue for Secondary Pins */
+            --star-primary: #facc15;   
+            --star-secondary: #38bdf8; 
         }
 
         * {
@@ -206,9 +206,6 @@
             margin: 16px 0 8px 4px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .games-grid {
@@ -217,10 +214,11 @@
             gap: 10px;
         }
 
+        /* Immersive Expanded Hero Grid (Takes more vertical space with detailed metrics) */
         .hero-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 14px;
             margin-bottom: 16px;
         }
 
@@ -239,8 +237,9 @@
         }
 
         .game-card.hero-card {
-            padding: 12px 14px;
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 20px 22px;
+            min-height: 220px; /* Takes significantly more vertical space */
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
             border: 2px solid var(--highlight);
         }
 
@@ -261,7 +260,8 @@
         }
 
         .hero-card .game-header {
-            font-size: 0.78rem;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
         }
 
         .game-status.live {
@@ -274,7 +274,7 @@
         }
 
         .hero-card .game-status.live {
-            font-size: 0.82rem;
+            font-size: 0.95rem;
         }
 
         .game-status.live::before {
@@ -287,10 +287,19 @@
             animation: pulse 1.5s infinite;
         }
 
+        .hero-card .game-status.live::before {
+            width: 8px;
+            height: 8px;
+        }
+
         .game-status.final {
             color: var(--accent-final);
             font-size: 0.72rem;
             font-weight: 700;
+        }
+
+        .hero-card .game-status.final {
+            font-size: 0.95rem;
         }
 
         .game-status.upcoming {
@@ -300,6 +309,10 @@
             font-weight: 500;
         }
 
+        .hero-card .game-status.upcoming {
+            font-size: 0.85rem;
+        }
+
         .teams-list {
             display: flex;
             flex-direction: column;
@@ -307,8 +320,8 @@
         }
 
         .hero-card .teams-list {
-            gap: 6px;
-            margin-top: 4px;
+            gap: 12px;
+            margin-bottom: 10px;
         }
 
         .team-row {
@@ -319,7 +332,7 @@
         }
 
         .hero-card .team-row {
-            font-size: 1.05rem;
+            font-size: 1.25rem;
         }
 
         .team-info {
@@ -340,8 +353,8 @@
         }
 
         .hero-card .team-logo {
-            width: 22px;
-            height: 22px;
+            width: 28px;
+            height: 28px;
         }
 
         .team-name {
@@ -368,7 +381,32 @@
         }
 
         .hero-card .team-score {
-            font-size: 1.15rem;
+            font-size: 1.4rem;
+        }
+
+        /* Expanded Details Box for Hero Cards */
+        .hero-details-box {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin: 8px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .hero-detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .situation-highlight {
+            color: #fde047;
+            font-weight: 600;
         }
 
         .card-actions {
@@ -389,12 +427,13 @@
         }
 
         .hero-card .broadcast {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
         }
 
         .pin-group {
             display: flex;
             gap: 4px;
+            flex-wrap: wrap;
         }
 
         .action-btn {
@@ -416,9 +455,17 @@
             border-color: rgba(250, 204, 21, 0.4);
         }
 
+        .action-btn.primary-pin.active {
+            background-color: rgba(250, 204, 21, 0.2);
+        }
+
         .action-btn.secondary-pin {
             color: var(--star-secondary);
             border-color: rgba(56, 189, 248, 0.4);
+        }
+
+        .action-btn.secondary-pin.active {
+            background-color: rgba(56, 189, 248, 0.2);
         }
 
         .loading, .error, .no-games {
@@ -512,7 +559,6 @@
         let countdownTimer = 20;
         let showOnlyFollowed = false;
         
-        // Storage arrays of game IDs
         let primaryPinnedIds = JSON.parse(localStorage.getItem('matt_cfb_primary')) || [];
         let secondaryPinnedIds = JSON.parse(localStorage.getItem('matt_cfb_secondary')) || [];
 
@@ -550,19 +596,28 @@
         }
 
         function setPin(gameId, type) {
-            // Remove from both first to avoid duplicates
+            const isAlreadyPrimary = primaryPinnedIds.includes(gameId);
+            const isAlreadySecondary = secondaryPinnedIds.includes(gameId);
+
+            // If clicking active pin button, unpin it entirely
+            if ((type === 'primary' && isAlreadyPrimary) || (type === 'secondary' && isAlreadySecondary)) {
+                removePin(gameId);
+                return;
+            }
+
+            // Remove from both lists first
             primaryPinnedIds = primaryPinnedIds.filter(id => id !== gameId);
             secondaryPinnedIds = secondaryPinnedIds.filter(id => id !== gameId);
 
             if (type === 'primary') {
-                if (primaryPinnedIds.length >= 4) {
-                    alert('You can pin up to 4 primary large games.');
+                if (primaryPinnedIds.length >= 2) {
+                    alert('You can only pin a maximum of 2 Large Games.');
                     return;
                 }
                 primaryPinnedIds.push(gameId);
             } else if (type === 'secondary') {
-                if (secondaryPinnedIds.length >= 6) {
-                    alert('You can pin up to 6 secondary games.');
+                if (secondaryPinnedIds.length >= 4) {
+                    alert('You can only pin a maximum of 4 Small Games.');
                     return;
                 }
                 secondaryPinnedIds.push(gameId);
@@ -587,7 +642,6 @@
             const newIndex = index + direction;
             if (newIndex < 0 || newIndex >= list.length) return;
 
-            // Swap positions
             const temp = list[index];
             list[index] = list[newIndex];
             list[newIndex] = temp;
@@ -721,6 +775,8 @@
             const statusDetail = event.status.type.detail; 
             const gameDate = event.date; 
             const broadcast = comp.broadcasts?.[0]?.names?.[0] || '';
+            const situation = comp.situation ? comp.situation.downDistanceText : '';
+            const possession = comp.situation?.possession ? comp.situation.possession : null;
 
             const homeTeam = comp.competitors.find(c => c.homeAway === 'home');
             const awayTeam = comp.competitors.find(c => c.homeAway === 'away');
@@ -752,21 +808,43 @@
             const isPrimary = primaryPinnedIds.includes(gameId);
             const isSecondary = secondaryPinnedIds.includes(gameId);
 
+            // Detailed progress block for Immersive Hero Cards
+            let heroDetailsHtml = '';
+            if (isHero) {
+                let ballPossessionText = 'None';
+                if (possession) {
+                    ballPossessionText = possession === awayTeam.id ? `🏈 ${awayTeam.team.shortDisplayName || awayTeam.team.name} has ball` : `🏈 ${homeTeam.team.shortDisplayName || homeTeam.team.name} has ball`;
+                }
+
+                heroDetailsHtml = `
+                    <div class="hero-details-box">
+                        <div class="hero-detail-row">
+                            <span>Field Position / Down:</span>
+                            <span class="situation-highlight">${situation || 'Normal Play'}</span>
+                        </div>
+                        <div class="hero-detail-row">
+                            <span>Possession:</span>
+                            <span>${ballPossessionText}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
             let actionButtonsHtml = '';
             if (inFollowScreen) {
                 actionButtonsHtml = `
                     <div class="pin-group">
                         <button class="action-btn" onclick="movePin('${gameId}', '${isHero ? 'primary' : 'secondary'}', -1)" title="Move Up">⬆️</button>
                         <button class="action-btn" onclick="movePin('${gameId}', '${isHero ? 'primary' : 'secondary'}', 1)" title="Move Down">⬇️</button>
-                        <button class="action-btn" onclick="setPin('${gameId}', '${isHero ? 'secondary' : 'primary'}')" title="Switch Size">${isHero ? '📉 Make Small' : '📈 Make Large'}</button>
+                        <button class="action-btn" onclick="setPin('${gameId}', '${isHero ? 'secondary' : 'primary}')" title="Switch Size">${isHero ? '📉 Make Small' : '📈 Make Large'}</button>
                         <button class="action-btn" style="background:#7f1d1d; border-color:#991b1b;" onclick="removePin('${gameId}')">❌ Remove</button>
                     </div>
                 `;
             } else {
                 actionButtonsHtml = `
                     <div class="pin-group">
-                        <button class="action-btn primary-pin ${isPrimary ? 'active' : ''}" onclick="setPin('${gameId}', 'primary')">⭐ Pin Large</button>
-                        <button class="action-btn secondary-pin ${isSecondary ? 'active' : ''}" onclick="setPin('${gameId}', 'secondary')">⭐ Pin Small</button>
+                        <button class="action-btn primary-pin ${isPrimary ? 'active' : ''}" onclick="setPin('${gameId}', 'primary')">⭐ ${isPrimary ? 'Unpin Large' : 'Pin Large'}</button>
+                        <button class="action-btn secondary-pin ${isSecondary ? 'active' : ''}" onclick="setPin('${gameId}', 'secondary')">⭐ ${isSecondary ? 'Unpin Small' : 'Pin Small'}</button>
                     </div>
                 `;
             }
@@ -793,9 +871,10 @@
                             <span class="team-score">${homeTeam.score ?? '0'}</span>
                         </div>
                     </div>
+                    ${heroDetailsHtml}
                     <div class="card-actions">
                         <span style="font-size: 0.6rem; color: var(--text-muted);">
-                            ${isPrimary ? '⭐ Large Pin' : isSecondary ? '⭐ Small Pin' : ''}
+                            ${isPrimary ? '⭐ Large Pin (Hero)' : isSecondary ? '⭐ Small Pin' : ''}
                         </span>
                         ${actionButtonsHtml}
                     </div>
@@ -822,7 +901,7 @@
                     container.innerHTML = `
                         <div class="no-games">
                             <p style="margin-bottom: 8px; font-size: 1rem; color: #fff;">No games pinned to your Follow Screen yet!</p>
-                            <p>Click <b>Pin Large</b> or <b>Pin Small</b> on any game card to design your custom command center layout.</p>
+                            <p>Click <b>Pin Large</b> (max 2) or <b>Pin Small</b> (max 4) on any game card to design your command center.</p>
                         </div>`;
                     return;
                 }
@@ -830,14 +909,14 @@
                 let html = '';
 
                 if (primaryEvents.length > 0) {
-                    html += `<div class="section-title"><span>⭐ Primary Large Featured Games</span></div>`;
+                    html += `<div class="section-title"><span>⭐ Primary Immersive Featured Games (Max 2)</span></div>`;
                     html += `<div class="hero-grid">`;
                     html += primaryEvents.map(e => buildCardHtml(e, true, true)).join('');
                     html += `</div>`;
                 }
 
                 if (secondaryEvents.length > 0) {
-                    html += `<div class="section-title"><span>⭐ Secondary Small Ticker Games</span></div>`;
+                    html += `<div class="section-title"><span>⭐ Secondary Small Ticker Games (Max 4)</span></div>`;
                     html += `<div class="games-grid">`;
                     html += secondaryEvents.map(e => buildCardHtml(e, false, true)).join('');
                     html += `</div>`;
@@ -880,6 +959,7 @@
 
         fetchScores();
 
+        // Background ticker updates scores and details every 20 seconds seamlessly without full page reloads
         setInterval(() => {
             const statusEl = document.getElementById('update-status');
             if (statusEl.textContent.includes('Updating')) return;
